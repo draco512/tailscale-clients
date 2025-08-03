@@ -1,0 +1,12 @@
+# Deployment directories
+deployments/
+
+# Environment files with secrets
+*.env
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+.DS_Store

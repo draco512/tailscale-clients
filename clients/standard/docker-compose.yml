@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: tailscale-${CLIENT_NAME:-client}
+    hostname: ${CLIENT_NAME:-client}
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - tailscale-data:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SOCKET=/var/run/tailscale/tailscaled.sock
+      - TS_EXTRA_ARGS=${TS_EXTRA_ARGS:-}
+      - TS_HOSTNAME=${CLIENT_NAME:-client}
+      - TS_ACCEPT_DNS=${TS_ACCEPT_DNS:-true}
+      - TS_ROUTES=${TS_ROUTES:-}
+    command: sh -c "tailscaled --tun=userspace-networking & sleep 5 && tailscale up --authkey=$${TS_AUTHKEY} --hostname=$${TS_HOSTNAME} $${TS_EXTRA_ARGS} && wait"
+    networks:
+      - tailscale
+    healthcheck:
+      test: ["CMD", "tailscale", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  tailscale-data:
+
+networks:
+  tailscale:
+    driver: bridge
