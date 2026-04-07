@@ -69,7 +69,7 @@ sudo ufw allow out on tailscale0
    ```
 
 2. **Via Admin UI:**
-   - Go to `https://admin.vps.schefenacker.net`
+   - Go to `https://admin.YOUR_DOMAIN`
    - Navigate to PreAuth Keys
    - Create new key for user
 
